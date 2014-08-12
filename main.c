@@ -2,6 +2,14 @@
 #include <stdlib.h>
 #define CELLSIZE 4 
 
+/* 6-11 lines is lastest added. */
+#define UP 0
+#define DOWN 1
+#define LEFT 2
+#define RIGHT 3
+
+int lastKey=DOWN;
+
 int x,y; // start position
 int BOX[4][4]={  //the number displayed
     {0,0,0,0},
@@ -64,7 +72,7 @@ int _random()
 int alloc_number() //input number in the empty cell
 {
 	int i,j,_index=0;
-	int rand_arr[16];
+/*	int rand_arr[16];
 	for(i=0;i<16;i++)
 		rand_arr[i]=0;
 
@@ -74,6 +82,26 @@ int alloc_number() //input number in the empty cell
 			if(BOX[i][j]==0)
 				rand_arr[_index++]=(0xff & i <<4) | (0xf & j);
 		}
+*/
+	int rand_arr[4]={0,0,0,0};
+	switch(lastKey)
+	{
+		case UP:
+			i=3;
+			for(j=0;j<4;j++) if(BOX[i][j]==0) rand_arr[_index++]=(0xff & i<< 4) | (0xf & j);
+			break;
+		case DOWN:
+			i=0;
+			for(j=0;j<4;j++) if(BOX[i][j]==0) rand_arr[_index++]=(0xff & i<< 4) | (0xf & j);
+			break;
+		case LEFT:
+			j=3;
+			for(i=0;i<4;i++) if(BOX[i][j]==0) rand_arr[_index++]=(0xff & i<< 4) | (0xf & j);
+			break;
+		case RIGHT:
+			j=0;
+			for(i=0;i<4;i++) if(BOX[i][j]==0) rand_arr[_index++]=(0xff & i<< 4) | (0xf & j);
+	}
 	if (_index == 0) return -1;
 
 	int n=_random()% _index;
@@ -128,6 +156,7 @@ int handle_keydown()
 							}
 					}
 				}
+			lastKey=UP;
 			break;
 		case 258: //down
 		case 115:
@@ -159,6 +188,7 @@ int handle_keydown()
 							}
 					}
 				}
+			lastKey=DOWN;
 			break;
 		case 260: //left
 		case 97:
@@ -190,6 +220,7 @@ int handle_keydown()
 							}
 					}
 				}
+			lastKey=LEFT;
 			break;
 		case 261: //right
 		case 100:
@@ -221,6 +252,7 @@ int handle_keydown()
 							}
 					}
 				}
+			lastKey=RIGHT;
 			break;
 		default:
 			return 1;
@@ -251,7 +283,7 @@ int main()
 		drawGameBox();
 		printBoxNumber();
 		refresh();
-		while(handle_keydown()==1);
+		while(handle_keydown()==1); // other key is pressed
 		if(isGameOver())  //game over
 		{
 			move(x-1,y+CELLSIZE);
